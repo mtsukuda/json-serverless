@@ -12,3 +12,4 @@ jspm_packages
 **/package.json.lerna_backup
 **/.DS_Store
 .npmrc
+.idea
