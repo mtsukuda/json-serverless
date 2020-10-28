@@ -327,6 +327,21 @@ export class Helpers {
     console.log();
   }
 
+  static defaultStringYearToSecond(dateSeparate = '-', timeSeparate = ':'): string {
+    const now: Date = new Date();
+    const result = now.getFullYear().toString() + dateSeparate +
+      Helpers.padZero(now.getMonth() + 1) + dateSeparate +
+      Helpers.padZero(now.getDate() + 1) + ((dateSeparate && timeSeparate ? ' ' : '')) +
+      Helpers.padZero(now.getHours() + 1) + timeSeparate +
+      Helpers.padZero(now.getMinutes() + 1) + timeSeparate +
+      Helpers.padZero(now.getSeconds() + 1);
+    return result;
+  }
+
+  private static padZero(num: number): string {
+    return (num < 10 ? '0' : '') + num;
+  }
+
   private static parseServerlessInfo(slsinfo: string) {
     const rows = JSON.stringify(slsinfo).split('\\n') as any[];
     const createKeyValues = rows.map((x, i, rows) => {
