@@ -274,7 +274,7 @@ export class Helpers {
     if (apiKeyValue) {
       console.log(
         `${chalk.green(
-          'Please use the following Apikey in your header to authenticate: {"authorization":"apiKeyValue"}'
+          'Please use the following Apikey in your header to authenticate: {"x-api-key":"apiKeyValue"}'
         )} ` + apiKeyValue
       );
     }

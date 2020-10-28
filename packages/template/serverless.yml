@@ -33,6 +33,9 @@ provider:
   name: aws
   runtime: nodejs12.x
   region: ${self:custom.region}
+  apiKeys:
+    - name: ${self:custom.file.apiKeyName}
+      value: ${self:custom.file.apiKeyValue}
   stackTags: # Tags that will be added to each of the deployment resources
     jsonsls: ${self:custom.file.stackName}
   environment:
@@ -73,6 +76,7 @@ functions:
       - http:
           path: /
           method: ANY
+          private: true
           cors:
             origin: '*' # <-- Specify allowed origin
             headers: # <-- Specify allowed headers
@@ -86,6 +90,7 @@ functions:
       - http:
           path: '{proxy+}'
           method: ANY
+          private: true
           cors:
             origin: '*' # <-- Specify allowed origin
             headers: # <-- Specify allowed headers

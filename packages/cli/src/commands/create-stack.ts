@@ -32,6 +32,12 @@ export class CreateStackCommand extends Command {
       required: false, // make flag required (this is not common and you should probably use an argument instead)
       allowNo: true,
     }),
+    genapikey: flags.boolean({
+      char: 'g', // shorter flag version
+      description: 'generate access api key', // help description for flag
+      hidden: false, // hide from help
+      required: false, // make flag required (this is not common and you should probably use an argument instead)
+    }),
     apikeyauth: flags.boolean({
       char: 'a', // shorter flag version
       description: 'require api key authentication to access api', // help description for flag
@@ -135,6 +141,19 @@ export class CreateStackCommand extends Command {
     let stackName = await this.getApiName(flags.name);
     let stackDescription = await this.getDescription(flags.description);
     let apiKeyValue: string;
+
+    let apiKeyName: string | undefined;
+    let apiKeyValue2: string | undefined;
+    const defaultApiKeyName = `API Key ${Helpers.defaultStringYearToSecond()}`;
+    const defaultApiKeyValue = uuidv4();
+    if (flags.genapikey) {
+      apiKeyName = defaultApiKeyName;
+      apiKeyValue2 = defaultApiKeyValue;
+    } else {
+      apiKeyName = await this.getApiKeyName(defaultApiKeyName);
+      apiKeyValue2 = await this.getApiKeyValue(defaultApiKeyValue);
+    }
+
     this.log();
     let region: string | undefined;
     if (flags.region) {
@@ -144,7 +163,7 @@ export class CreateStackCommand extends Command {
     }
     let filePath = path.normalize(args.file);
     const templateFolder = path.normalize(
-      this.config.root + '/node_modules/json-serverless-template/'
+      this.config.root + '/../template/'
     );
     const stackFolder = path.normalize(process.cwd() + '/' + stackName + '/');
     this.log();
@@ -213,6 +232,8 @@ export class CreateStackCommand extends Command {
             const serverlessConfig = new ServerlessConfig();
             serverlessConfig.awsRegion = region;
             serverlessConfig.stage = args.stage;
+            serverlessConfig.apiKeyName = apiKeyName;
+            serverlessConfig.apiKeyValue = apiKeyValue2;
             Helpers.createDir(stackFolder + '/config');
             fs.writeFileSync(
               path.normalize(stackFolder + '/config/serverlessconfig.json'),
@@ -303,7 +324,7 @@ export class CreateStackCommand extends Command {
           appConfig,
           args.stage,
           'jsonsls-' + appConfig.stackName + '-' + args.stage,
-          apiKeyValue!
+          apiKeyValue2!
         );
       } catch (error) {
         this.log(`${chalk.red(error.message)}`);
@@ -360,6 +381,30 @@ export class CreateStackCommand extends Command {
       stackName = apiNameAnswer.answer;
     }
     return stackName;
+  }
+
+  private async getApiKeyName(defaultKeyName?: string) {
+    let apiKeyName: string | undefined;
+    const apiKeyNameAnswer = await inquirer.prompt({
+      name: 'answer',
+      message: `${chalk.magenta('What is the name of the api key ?')}`,
+      type: 'input',
+      default: defaultKeyName,
+    });
+    apiKeyName = apiKeyNameAnswer.answer;
+    return apiKeyName;
+  }
+
+  private async getApiKeyValue(defaultKeyValue?: string) {
+    let apiKeyValue: string | undefined;
+    const apiKeyValueAnswer = await inquirer.prompt({
+      name: 'answer',
+      message: `${chalk.magenta('What is the value of the api key ?')}`,
+      type: 'input',
+      default: defaultKeyValue,
+    });
+    apiKeyValue = apiKeyValueAnswer.answer;
+    return apiKeyValue;
   }
 
   private async getRegion() {
