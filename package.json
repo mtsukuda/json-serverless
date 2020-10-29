@@ -5,7 +5,8 @@
   "main": "src/server.js",
   "scripts": {
     "commit": "git-cz",
-    "bootstrap": "lerna bootstrap"
+    "bootstrap": "lerna bootstrap",
+    "createstack": "./packages/cli/bin/run create-stack db.json prod -g"
   },
   "repository": {
     "type": "git",

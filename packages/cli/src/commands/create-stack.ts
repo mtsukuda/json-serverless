@@ -165,7 +165,7 @@ export class CreateStackCommand extends Command {
     const templateFolder = path.normalize(
       this.config.root + '/../template/'
     );
-    const stackFolder = path.normalize(process.cwd() + '/' + stackName + '/');
+    const stackFolder = path.normalize(process.cwd() + '/stacks/' + stackName + '/');
     this.log();
     this.log(
       'New stack template folder will be created under path: ' +
