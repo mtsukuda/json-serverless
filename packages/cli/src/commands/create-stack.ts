@@ -144,7 +144,7 @@ export class CreateStackCommand extends Command {
 
     let apiKeyName: string | undefined;
     let apiKeyValue2: string | undefined;
-    const defaultApiKeyName = `API Key ${Helpers.defaultStringYearToSecond()}`;
+    const defaultApiKeyName = `${stackName}-${args.stage} ${Helpers.defaultStringYearToSecond()}`;
     const defaultApiKeyValue = uuidv4();
     if (flags.genapikey) {
       apiKeyName = defaultApiKeyName;
